@@ -33,6 +33,42 @@ button {
 }
 button:disabled { background: #374151; cursor: wait; }
 
+.prompt-bar {
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #23262d;
+}
+.prompt-bar textarea {
+  flex: 1;
+  resize: none;
+  background: #14161a;
+  border: 1px solid #2b2f38;
+  border-radius: 8px;
+  color: #d7dae0;
+  font: inherit;
+  padding: 10px 12px;
+}
+.prompt-bar textarea:focus { outline: 1px solid #3b82f6; }
+
+.revise-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+.revise-bar input {
+  flex: 1;
+  background: #14161a;
+  border: 1px solid #2b2f38;
+  border-radius: 6px;
+  color: #d7dae0;
+  font: inherit;
+  padding: 8px 10px;
+}
+
+.report h2 .meta {
+  color: #6b7280;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
 main { display: flex; flex: 1; min-height: 0; }
 
 .viewer-pane { flex: 1.4; position: relative; }
