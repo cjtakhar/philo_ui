@@ -1,0 +1,23 @@
+# gitleaks configuration — Philo Mechanicus (frontend).
+# Extends the built-in ruleset and adds an explicit Anthropic key rule so the
+# guard is deterministic and readable, independent of gitleaks version drift.
+title = "Philo Mechanicus secret scan"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "philo-anthropic-api-key"
+description = "Anthropic API key (sk-ant-...)"
+regex = '''sk-ant-[a-zA-Z0-9_-]{20,}'''
+keywords = ["sk-ant-"]
+
+[allowlist]
+description = "Placeholders that are intentionally committed"
+regexes = [
+  '''sk-ant-REPLACE-WITH-YOUR-KEY''',
+  '''sk-ant-your-key-here''',
+]
+paths = [
+  '''\.env\.example$''',
+]

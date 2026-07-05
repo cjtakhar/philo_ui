@@ -30,7 +30,21 @@ export default function App() {
   const [revision, setRevision] = useState('')
   const [job, setJob] = useState<Job | null>(null)
   const [busy, setBusy] = useState(false)
+  const [tab, setTab] = useState<'model' | 'drawing'>('model')
+  const [drawingState, setDrawingState] = useState<'none' | 'working' | 'ready' | 'failed'>('none')
   const pollToken = useRef(0)
+
+  const makeDrawing = async () => {
+    if (!job?.id) return
+    setDrawingState('working')
+    try {
+      const res = await fetch(`/api/jobs/${job.id}/drawing`, { method: 'POST' })
+      const j = await res.json()
+      setDrawingState(res.ok && j.drawing_validated ? 'ready' : 'failed')
+    } catch {
+      setDrawingState('failed')
+    }
+  }
 
   const pollUntilDone = async (id: string) => {
     const token = ++pollToken.current
@@ -70,10 +84,16 @@ export default function App() {
   }
 
   const generate = () => {
-    if (prompt.trim()) submit('/api/jobs', { prompt })
+    if (prompt.trim()) {
+      setTab('model')
+      setDrawingState('none')
+      submit('/api/jobs', { prompt })
+    }
   }
   const revise = () => {
     if (revision.trim() && job?.id) {
+      setTab('model')
+      setDrawingState('none')
       submit(`/api/jobs/${job.id}/revise`, { prompt: revision })
       setRevision('')
     }
@@ -103,8 +123,41 @@ export default function App() {
 
       <main>
         <section className="viewer-pane">
+          {job?.status === 'validated' && (
+            <div className="tabs">
+              <button className={tab === 'model' ? 'active' : ''} onClick={() => setTab('model')}>
+                Model
+              </button>
+              <button className={tab === 'drawing' ? 'active' : ''} onClick={() => setTab('drawing')}>
+                Drawing
+              </button>
+            </div>
+          )}
           {job?.status === 'validated' ? (
-            <Viewer stlUrl={`/api/jobs/${job.id}/model.stl`} />
+            tab === 'model' ? (
+              <Viewer stlUrl={`/api/jobs/${job.id}/model.stl`} />
+            ) : (
+              <div className="drawing-pane">
+                {drawingState === 'ready' ? (
+                  <>
+                    <img src={`/api/jobs/${job.id}/drawing.svg`} alt="Technical drawing" />
+                    <div className="downloads">
+                      <a href={`/api/jobs/${job.id}/drawing.dxf`} download>DXF</a>
+                      <a href={`/api/jobs/${job.id}/drawing.pdf`} download>PDF</a>
+                      <a href={`/api/jobs/${job.id}/drawing.svg`} download>SVG</a>
+                    </div>
+                  </>
+                ) : (
+                  <div className="placeholder">
+                    {drawingState === 'working'
+                      ? 'Deriving drawing from the model…'
+                      : drawingState === 'failed'
+                        ? 'Drawing generation or validation failed.'
+                        : <button onClick={makeDrawing}>Generate drawing</button>}
+                  </div>
+                )}
+              </div>
+            )
           ) : (
             <div className="placeholder">
               {working

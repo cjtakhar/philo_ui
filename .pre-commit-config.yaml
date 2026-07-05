@@ -1,0 +1,12 @@
+# Pre-commit hooks. Install once per clone:  pre-commit install
+# Prerequisite: gitleaks on PATH (brew install gitleaks) — this repo uses a
+# system hook rather than the golang-built hook so it works without a Go
+# toolchain. CI runs the same scan independently (.github/workflows).
+repos:
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: gitleaks (staged secret scan)
+        entry: gitleaks git --pre-commit --redact --staged --verbose --config .gitleaks.toml
+        language: system
+        pass_filenames: false

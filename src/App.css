@@ -71,7 +71,31 @@ button:disabled { background: #374151; cursor: wait; }
 
 main { display: flex; flex: 1; min-height: 0; }
 
-.viewer-pane { flex: 1.4; position: relative; }
+.viewer-pane { flex: 1.4; position: relative; display: flex; flex-direction: column; }
+
+.tabs { display: flex; gap: 2px; padding: 8px 12px 0; }
+.tabs button {
+  background: #1a1d23;
+  color: #9ca3af;
+  border-radius: 6px 6px 0 0;
+  padding: 6px 18px;
+  font-size: 13px;
+}
+.tabs button.active { background: #3b82f6; color: white; }
+
+.drawing-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f4f5f7;
+  overflow: auto;
+}
+.drawing-pane img { max-width: 96%; max-height: 85%; background: white; box-shadow: 0 2px 12px rgba(0,0,0,.25); }
+.drawing-pane .downloads { display: flex; gap: 14px; padding: 10px; }
+.drawing-pane .downloads a { color: #1d4ed8; font-size: 13px; font-family: monospace; }
+.drawing-pane .placeholder { color: #6b7280; }
 .viewer, .placeholder { width: 100%; height: 100%; }
 .placeholder {
   display: flex;

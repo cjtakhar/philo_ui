@@ -8,9 +8,21 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+node_modules/
 dist
+dist/
 dist-ssr
 *.local
+
+# Secrets — never commit. .env.example is the committed onboarding contract.
+.env
+.env.*
+!.env.example
+
+# Python (sandbox probes) / databases, if ever present here
+__pycache__/
+*.pyc
+*.db
 
 # Editor directories and files
 .vscode/*
