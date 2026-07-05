@@ -25,6 +25,13 @@ interface Job {
 const STATUS_ICON = { pass: '✓', fail: '✗', warn: '⚠' } as const
 const POLL_MS = 2000
 
+// Dev: '' → Vite proxies /api to localhost:5001. Prod: the deployed Render backend.
+// Override with VITE_API_BASE if needed.
+const API_BASE =
+  import.meta.env.VITE_API_BASE ??
+  (import.meta.env.PROD ? 'https://philomechanicus.onrender.com' : '')
+const api = (path: string) => `${API_BASE}${path}`
+
 export default function App() {
   const [prompt, setPrompt] = useState('')
   const [revision, setRevision] = useState('')
@@ -38,7 +45,7 @@ export default function App() {
     if (!job?.id) return
     setDrawingState('working')
     try {
-      const res = await fetch(`/api/jobs/${job.id}/drawing`, { method: 'POST' })
+      const res = await fetch(api(`/api/jobs/${job.id}/drawing`), { method: 'POST' })
       const j = await res.json()
       setDrawingState(res.ok && j.drawing_validated ? 'ready' : 'failed')
     } catch {
@@ -49,7 +56,7 @@ export default function App() {
   const pollUntilDone = async (id: string) => {
     const token = ++pollToken.current
     for (;;) {
-      const res = await fetch(`/api/jobs/${id}`)
+      const res = await fetch(api(`/api/jobs/${id}`))
       const j: Job = await res.json()
       if (token !== pollToken.current) return // superseded by a newer job
       setJob(j)
@@ -87,14 +94,14 @@ export default function App() {
     if (prompt.trim()) {
       setTab('model')
       setDrawingState('none')
-      submit('/api/jobs', { prompt })
+      submit(api('/api/jobs'), { prompt })
     }
   }
   const revise = () => {
     if (revision.trim() && job?.id) {
       setTab('model')
       setDrawingState('none')
-      submit(`/api/jobs/${job.id}/revise`, { prompt: revision })
+      submit(api(`/api/jobs/${job.id}/revise`), { prompt: revision })
       setRevision('')
     }
   }
@@ -135,16 +142,16 @@ export default function App() {
           )}
           {job?.status === 'validated' ? (
             tab === 'model' ? (
-              <Viewer stlUrl={`/api/jobs/${job.id}/model.stl`} />
+              <Viewer stlUrl={api(`/api/jobs/${job.id}/model.stl`)} />
             ) : (
               <div className="drawing-pane">
                 {drawingState === 'ready' ? (
                   <>
-                    <img src={`/api/jobs/${job.id}/drawing.svg`} alt="Technical drawing" />
+                    <img src={api(`/api/jobs/${job.id}/drawing.svg`)} alt="Technical drawing" />
                     <div className="downloads">
-                      <a href={`/api/jobs/${job.id}/drawing.dxf`} download>DXF</a>
-                      <a href={`/api/jobs/${job.id}/drawing.pdf`} download>PDF</a>
-                      <a href={`/api/jobs/${job.id}/drawing.svg`} download>SVG</a>
+                      <a href={api(`/api/jobs/${job.id}/drawing.dxf`)} download>DXF</a>
+                      <a href={api(`/api/jobs/${job.id}/drawing.pdf`)} download>PDF</a>
+                      <a href={api(`/api/jobs/${job.id}/drawing.svg`)} download>SVG</a>
                     </div>
                   </>
                 ) : (
