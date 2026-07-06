@@ -180,6 +180,30 @@ export default function App() {
 
         <aside>
           {job?.status === 'validated' && (
+            <div className="download-bar">
+              <a
+                className="download-stl"
+                href={api(`/api/jobs/${job.id}/model.stl`)}
+                download
+              >
+                Download STL
+              </a>
+              <a
+                className="download-step"
+                href={api(`/api/jobs/${job.id}/model.step`)}
+                download
+              >
+                STEP (for CAD)
+              </a>
+            </div>
+          )}
+          {working && (
+            <div className="download-bar">
+              <span className="download-pending">Generating…</span>
+            </div>
+          )}
+
+          {job?.status === 'validated' && (
             <div className="revise-bar">
               <input
                 value={revision}

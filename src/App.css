@@ -69,6 +69,34 @@ button:disabled { background: #374151; cursor: wait; }
   letter-spacing: 0;
 }
 
+.download-bar {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.download-stl {
+  background: #3b82f6;
+  color: white;
+  text-decoration: none;
+  padding: 9px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.download-stl:hover { background: #2f6fe0; }
+.download-step {
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 12.5px;
+}
+.download-step:hover { color: #9ca3af; text-decoration: underline; }
+.download-pending {
+  color: #6b7280;
+  font-size: 13px;
+  font-style: italic;
+}
+
 main { display: flex; flex: 1; min-height: 0; }
 
 .viewer-pane { flex: 1.4; position: relative; display: flex; flex-direction: column; }
